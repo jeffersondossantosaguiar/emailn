@@ -17,7 +17,7 @@ func Test_HandlerError_when_endpoint_returns_internal_error(t *testing.T) {
 		return nil, 0, internalerrors.ErrInternal
 	}
 	handlerFunc := HandlerError(endpoint)
-	req, _ := http.NewRequest("GET", "/", nil)
+	req, _ := http.NewRequest(http.MethodGet, "/", nil)
 	res := httptest.NewRecorder()
 
 	handlerFunc.ServeHTTP(res, req)
@@ -32,7 +32,7 @@ func Test_HandlerError_when_endpoint_returns_domain_error(t *testing.T) {
 		return nil, 0, errors.New("domain error")
 	}
 	handlerFunc := HandlerError(endpoint)
-	req, _ := http.NewRequest("GET", "/", nil)
+	req, _ := http.NewRequest(http.MethodGet, "/", nil)
 	res := httptest.NewRecorder()
 
 	handlerFunc.ServeHTTP(res, req)
@@ -53,7 +53,7 @@ func Test_HandlerError_when_endpoint_returns_obj_and_status_error(t *testing.T) 
 		return objExpected, http.StatusCreated, nil
 	}
 	handlerFunc := HandlerError(endpoint)
-	req, _ := http.NewRequest("GET", "/", nil)
+	req, _ := http.NewRequest(http.MethodGet, "/", nil)
 	res := httptest.NewRecorder()
 
 	handlerFunc.ServeHTTP(res, req)
