@@ -3,12 +3,14 @@ package campaign
 import (
 	"emailn/internal/contract"
 	internalerrors "emailn/internal/internal-errors"
+	"errors"
 )
 
 type Service interface {
 	Create(newCampaign contract.NewCampaign) (string, error)
 	Get() ([]contract.CampaignResponse, error)
 	GetBy(id string) (*contract.CampaignResponse, error)
+	Cancel(id string) error
 }
 
 type ServiceImp struct {
@@ -32,21 +34,6 @@ func (s *ServiceImp) Create(newCampaign contract.NewCampaign) (string, error) {
 	return campaign.ID, nil
 }
 
-func (s *ServiceImp) GetBy(id string) (*contract.CampaignResponse, error) {
-	campaign, err := s.Repository.GetBy(id)
-
-	if err != nil {
-		return nil, internalerrors.ErrInternal
-	}
-
-	return &contract.CampaignResponse{
-		ID:      campaign.ID,
-		Name:    campaign.Name,
-		Content: campaign.Content,
-		Status:  campaign.Status,
-	}, nil
-}
-
 func (s *ServiceImp) Get() ([]contract.CampaignResponse, error) {
 	campaigns, err := s.Repository.Get()
 
@@ -67,4 +54,40 @@ func (s *ServiceImp) Get() ([]contract.CampaignResponse, error) {
 	}
 
 	return responses, nil
+}
+
+func (s *ServiceImp) GetBy(id string) (*contract.CampaignResponse, error) {
+	campaign, err := s.Repository.GetBy(id)
+
+	if err != nil {
+		return nil, internalerrors.ErrInternal
+	}
+
+	return &contract.CampaignResponse{
+		ID:      campaign.ID,
+		Name:    campaign.Name,
+		Content: campaign.Content,
+		Status:  campaign.Status,
+	}, nil
+}
+
+func (s *ServiceImp) Cancel(id string) error {
+	campaign, err := s.Repository.GetBy(id)
+
+	if err != nil {
+		return internalerrors.ErrInternal
+	}
+
+	if campaign.Status != Pending {
+		return errors.New("Campaign status invalid")
+	}
+
+	campaign.Cancel()
+	err = s.Repository.Save(campaign)
+
+	if err != nil {
+		return internalerrors.ErrInternal
+	}
+
+	return nil
 }
