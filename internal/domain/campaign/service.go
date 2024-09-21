@@ -7,6 +7,7 @@ import (
 
 type Service interface {
 	Create(newCampaign contract.NewCampaign) (string, error)
+	Get() ([]contract.CampaignResponse, error)
 	GetBy(id string) (*contract.CampaignResponse, error)
 }
 
@@ -44,5 +45,26 @@ func (s *ServiceImp) GetBy(id string) (*contract.CampaignResponse, error) {
 		Content: campaign.Content,
 		Status:  campaign.Status,
 	}, nil
+}
 
+func (s *ServiceImp) Get() ([]contract.CampaignResponse, error) {
+	campaigns, err := s.Repository.Get()
+
+	if err != nil {
+		return nil, internalerrors.ErrInternal
+	}
+
+	var responses []contract.CampaignResponse
+
+	for _, campaign := range campaigns {
+		response := contract.CampaignResponse{
+			ID:      campaign.ID,
+			Name:    campaign.Name,
+			Content: campaign.Content,
+			Status:  campaign.Status,
+		}
+		responses = append(responses, response)
+	}
+
+	return responses, nil
 }

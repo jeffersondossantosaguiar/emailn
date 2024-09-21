@@ -9,3 +9,7 @@ POST http://localhost:3000/campaigns
 ###
 
 GET http://localhost:3000/campaigns
+
+###
+
+GET http://localhost:3000/campaigns/crnjbk55mju120llrq70
