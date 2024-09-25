@@ -13,3 +13,11 @@ GET http://localhost:3000/campaigns
 ###
 
 GET http://localhost:3000/campaigns/crnjbk55mju120llrq70
+
+###
+
+PATCH  http://localhost:3000/campaigns/crnjbk55mju120llrq70/cancel
+
+###
+
+DELETE  http://localhost:3000/campaigns/crnjk5t5mju4gcie8090
